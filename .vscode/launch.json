@@ -5,7 +5,7 @@
             "name": "Build & Debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/Knapsack",
+            "program": "${workspaceFolder}/Knapsack.exe",
             "args": [
                 
                 "data/ks_4_0",
@@ -40,8 +40,8 @@
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
-            "MIMode": "lldb",
-            "preLaunchTask": "C/C++: g++ build active file"
+            "MIMode": "gdb",
+            "preLaunchTask": "build"
         }
     ]
 }

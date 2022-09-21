@@ -23,14 +23,6 @@
 #include "lib.h"
 #include "iolib.h"
 
-long getTime() {
-    struct timeval start;
-    //gettimeofday(&start, NULL);
-    return long();
-}
-
-// TODO: configure cmake to spit out the executable in the project folder, not project folder/build
-
 // Take arguments from command line
 int main(int argc, char* args[]) {
 
