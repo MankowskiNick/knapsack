@@ -119,7 +119,7 @@ int Knapsack_Helper(std::map<double, int>& memo, const time_t& start_time, const
 			// Test if this case can beat our best answer yet(only for cases where it involves a better OR faster answer)
 			int n = items.size();
 			if (n == 4 || n == 30 || n == 40 || n == 45 || n == 60 || n == 82 || n == 106) {
-				int fractional_overestimate = profit_taken + REVISEDGet_Fractional_Overestimate(max_weight, items, cur_item, weight_used);
+				int fractional_overestimate = profit_taken + Get_Fractional_Overestimate(max_weight, items, cur_item, weight_used);
 				if (fractional_overestimate <= best_answer_yet) {
 					return profit_taken;
 				}
