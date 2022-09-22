@@ -79,13 +79,13 @@ int main(int argc, char* args[]) {
         // Sort items in order of profitability
         SortByProfit(items);
 
-        //TEMP time the function call
+        //Get the time of the start of a function call
         time_t beforeTime = time(NULL);
 
-        // TODO: Recursive call to find optimal solution
+        // Recursive call to find optimal solution
         int result = Solve_Knapsack(max_weight, items);
 
-        //TEMP time the function call
+        // Find the amount of time that the solution took
         time_t afterTime = time(NULL);
         int callTime = afterTime - beforeTime;
 
@@ -95,7 +95,7 @@ int main(int argc, char* args[]) {
         // Open the output file
         fout.open(outputFile.data());
 
-        // TODO: output data
+        // Output data
         std::cout << inputFile << ": Possible Optimal Max - " << result << "\nTime taken to get max - " << callTime << "\n"; 
         std::string output_list = "";
         GetOutputList(items, output_list);

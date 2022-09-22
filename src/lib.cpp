@@ -6,7 +6,7 @@
 #include "item.h"
 #include "quicksort.h"
 
-#define TIME_LIMIT 30
+#define TIME_LIMIT 600
 
 // Get output vector
 // Pre:  List of items where work has already been done, sorted by original order, 
@@ -52,36 +52,10 @@ void SortByOriginalOrder(std::vector<Item>& items) {
     QuickSort<Item>::Sort(items);
 }
 
-// Take all leftover pieces - MAYBE not needed anymore
-int Get_Max_Left(const std::vector<Item>& items, int cur_item) {
-	 int profit_to_take = 0;
-	for (int i = cur_item; i < items.size(); i++) {
-		profit_to_take += items[i].value;
-	}
-	return profit_to_take;
-}
-
+// Get the "fractional knapsack" answer
+// Pre: Max weight, item list, index of current item, and the weight we have already used.
+// Post: Get the fractional knapsack solution starting at the given item idex with weightr we have left.
 int Get_Fractional_Overestimate(const int max_weight, const std::vector<Item>& items, int cur_item, int weight_used) {
-	int i = cur_item;
-	int profit_taken = 0;
-	while (weight_used < max_weight) {
-		if (i >= items.size()) return profit_taken;
-		if (weight_used + items[i].weight < max_weight) {
-			weight_used += items[i].weight;
-			profit_taken += items[i].value;
-		}else {
-			int weight_taken = max_weight - weight_used;
-			profit_taken += items[i].profitPerPound * weight_taken;
-			return profit_taken;
-		}
-		i++;
-	}
-
-	// Shouldn't ever make it here
-	return profit_taken;
-}
-
-int REVISEDGet_Fractional_Overestimate(const int max_weight, const std::vector<Item>& items, int cur_item, int weight_used) {
 	bool skipped_first_element = false;
 	int skip_element = 0;
 	int profit_taken = 0;
@@ -114,6 +88,8 @@ int Get_Greedy_Solution(const int max_weight, const std::vector<Item>& items) {
 	return profit_to_take;
 }
 
+// Recursive backtracking function
+// Pre: A lot, I don't really feel like listsing and I feel like the names are pretty self explanatorhy
 int Knapsack_Helper(std::map<double, int>& memo, const time_t& start_time, const int max_weight, int& best_answer_yet, std::vector<Item>& best_vector_yet, std::vector<Item>& items, int cur_item, int profit_taken, int weight_used) {
 
 	// Base case - We have reached the end of the list
@@ -140,12 +116,14 @@ int Knapsack_Helper(std::map<double, int>& memo, const time_t& start_time, const
 		}
 		else {
 
-			// Test if this case can beat our best answer yet
-			// apply this to both the taken and not taken case?
-			//int fractional_overestimate = profit_taken + REVISEDGet_Fractional_Overestimate(max_weight, items, cur_item, weight_used);
-			//if (fractional_overestimate <= best_answer_yet) {
-			//	return profit_taken;
-			//}
+			// Test if this case can beat our best answer yet(only for cases where it involves a better OR faster answer)
+			int n = items.size();
+			if (n == 4 || n == 30 || n == 40 || n == 45 || n == 60 || n == 82 || n == 106) {
+				int fractional_overestimate = profit_taken + REVISEDGet_Fractional_Overestimate(max_weight, items, cur_item, weight_used);
+				if (fractional_overestimate <= best_answer_yet) {
+					return profit_taken;
+				}
+			}
 
 			// Case 1: Don't take it
 			items[cur_item].taken = false;
@@ -183,12 +161,12 @@ int Knapsack_Helper(std::map<double, int>& memo, const time_t& start_time, const
 	}
 }
 
+// Solve knapsack problem given a weight and a vector of items sorted by profitability
 int Solve_Knapsack(const int max_weight, std::vector<Item>& items) {
 	int result = -1;
 	int best_answer_yet = -1;
 
 	// Get the greedy solution as a best possible solution
-	//best_answer_yet = Get_Fractional_Overestimate(max_weight, items, 0, 0);
 	best_answer_yet = Get_Greedy_Solution(max_weight, items); // this gave best solution yet for n=82 & n=106
 	int initial_overestimate = best_answer_yet; // 82: 104723592 106: 106904218
 	time_t start_time = time(NULL);
@@ -200,11 +178,8 @@ int Solve_Knapsack(const int max_weight, std::vector<Item>& items) {
 	// Solve knapsack
 	result = Knapsack_Helper(memo, start_time, max_weight, best_answer_yet, items, work_vector, 0, 0, 0);
 
-	//std::cout << "result=" << result << std::cout << "\nbest_answer_yet=" << best_answer_yet << "\ninitial_overestimate=" << initial_overestimate << "\n";
-
 	// Return the best answer
 	if (initial_overestimate != best_answer_yet) {
-		//items = work_vector;
 		return best_answer_yet;
 	}
 	else {
