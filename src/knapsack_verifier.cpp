@@ -6,18 +6,11 @@
 
 using namespace std;
 
-
-
-int main(){
-  cout << "Enter the input file name: ";
-  string input_filename;
-  cin >> input_filename;
+void CheckFile(std::string input_filename, std::string output_filename){
+  std::cout << "\nFILE: "<< input_filename << "\n";
   ifstream input;
   input.open(input_filename.data());
   assert(input.is_open());
-  cout << "Enter the output file name: ";
-  string output_filename;
-  cin >> output_filename;
   ifstream output;
   output.open(output_filename.data());
   assert(output.is_open());
@@ -46,5 +39,11 @@ int main(){
     cout << "ERROR: Claimed profit of " << claimed_profit << " does not match actual profit of " << output_profit << endl;
   else
     cout << "OK" << endl;
-  return 0;
+}
+
+
+int main(int argc, char* args[]) {
+    for (int fileIndex = 1; fileIndex < argc; fileIndex+=2) {  
+      CheckFile(args[fileIndex], args[fileIndex + 1]);
+    }
 }

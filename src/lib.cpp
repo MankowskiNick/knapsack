@@ -63,14 +63,16 @@ int Get_Fractional_Overestimate(const int max_weight, const std::vector<Item>& i
 		if (weight_used + items[i].weight < max_weight) {
 			weight_used += items[i].weight;
 			profit_taken += items[i].value;
-		}else {
+		}else if (!skipped_first_element){
 			skipped_first_element = true;
 			skip_element = i;
 		}
 	}
 
-	int partial_weight_to_take = max_weight - weight_used;
-	profit_taken += items[skip_element].profitPerPound * partial_weight_to_take;
+	if (skipped_first_element) {
+		int partial_weight_to_take = max_weight - weight_used;
+		profit_taken += items[skip_element].profitPerPound * partial_weight_to_take;
+	}	
 
 	return profit_taken;
 }
@@ -110,20 +112,22 @@ int Knapsack_Helper(std::map<double, int>& memo, const time_t& start_time, const
 		double key = float(max_weight - weight_used) + key_decimal;
 
 		// Test if we have already performed this test
-		if (memo[key] > 0) { // Memo does not save the updates to the 'taken' vector
-			int profit_found = profit_taken + memo[key];
-			return profit_found;
-		}
+		//if (memo[key] > 0) { // Memo does not save the updates to the 'taken' vector
+		//	int profit_found = profit_taken + memo[key];
+		//	return profit_found;
+		//}
+		if (false){}
 		else {
 
 			// Test if this case can beat our best answer yet(only for cases where it involves a better OR faster answer)
-			int n = items.size();
-			if (n == 4 || n == 30 || n == 40 || n == 45 || n == 60 || n == 82 || n == 106) {
+			//int n = items.size();
+			//if (n == 4 || n == 30 || n == 40 || n == 45 || n == 60 || n == 82 || n == 106) {
+			//if (n != 106) {
 				int fractional_overestimate = profit_taken + Get_Fractional_Overestimate(max_weight, items, cur_item, weight_used);
 				if (fractional_overestimate <= best_answer_yet) {
 					return profit_taken;
 				}
-			}
+			//}
 
 			// Case 1: Don't take it
 			items[cur_item].taken = false;
@@ -153,7 +157,7 @@ int Knapsack_Helper(std::map<double, int>& memo, const time_t& start_time, const
 				best_vector_yet = std::vector<Item>(items);
 			}
 			// Store value in memo
-			memo[key] = return_profit - profit_taken; // We need to store the value of what is added to profit
+			//memo[key] = return_profit - profit_taken; // We need to store the value of what is added to profit
 
 			// Return best profit
 			return return_profit;
