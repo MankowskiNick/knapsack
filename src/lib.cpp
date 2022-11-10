@@ -91,7 +91,6 @@ int Get_Greedy_Solution(const int max_weight, const std::vector<Item>& items) {
 }
 
 // Recursive backtracking function
-// Pre: A lot, I don't really feel like listsing and I feel like the names are pretty self explanatorhy
 int Knapsack_Helper(std::map<double, int>& memo, const time_t& start_time, const int max_weight, int& best_answer_yet, std::vector<Item>& best_vector_yet, std::vector<Item>& items, int cur_item, int profit_taken, int weight_used) {
 
 	// Base case - We have reached the end of the list
@@ -111,57 +110,43 @@ int Knapsack_Helper(std::map<double, int>& memo, const time_t& start_time, const
 		while (key_decimal >= 1) key_decimal /= 10;
 		double key = float(max_weight - weight_used) + key_decimal;
 
-		// Test if we have already performed this test
-		//if (memo[key] > 0) { // Memo does not save the updates to the 'taken' vector
-		//	int profit_found = profit_taken + memo[key];
-		//	return profit_found;
-		//}
-		if (false){}
-		else {
-
-			// Test if this case can beat our best answer yet(only for cases where it involves a better OR faster answer)
-			//int n = items.size();
-			//if (n == 4 || n == 30 || n == 40 || n == 45 || n == 60 || n == 82 || n == 106) {
-			//if (n != 106) {
-				int fractional_overestimate = profit_taken + Get_Fractional_Overestimate(max_weight, items, cur_item, weight_used);
-				if (fractional_overestimate <= best_answer_yet) {
-					return profit_taken;
-				}
-			//}
-
-			// Case 1: Don't take it
-			items[cur_item].taken = false;
-			int not_taken_profit = -1;
-			not_taken_profit = Knapsack_Helper(memo, start_time, max_weight, best_answer_yet, best_vector_yet, items, cur_item + 1, profit_taken, weight_used);
-
-			// Case 2: Take it
-			items[cur_item].taken = true;
-			int taken_profit = -1;
-			if (weight_used + items[cur_item].weight <= max_weight) {
-				taken_profit = Knapsack_Helper(memo, start_time, max_weight, best_answer_yet, best_vector_yet, items, cur_item + 1, profit_taken + items[cur_item].value, weight_used + items[cur_item].weight);
-			}
-
-			// Select the most profitable case
-			int return_profit;
-			if (not_taken_profit > taken_profit) {
-				items[cur_item].taken = false;
-				return_profit = not_taken_profit;
-			} else {
-				items[cur_item].taken = true;
-				return_profit = taken_profit;
-			}
-
-			// Check if we have found the best result yet
-			if (return_profit > best_answer_yet) {
-				best_answer_yet = return_profit;
-				best_vector_yet = std::vector<Item>(items);
-			}
-			// Store value in memo
-			//memo[key] = return_profit - profit_taken; // We need to store the value of what is added to profit
-
-			// Return best profit
-			return return_profit;
+		// Get overestimate
+		int fractional_overestimate = profit_taken + Get_Fractional_Overestimate(max_weight, items, cur_item, weight_used);
+		if (fractional_overestimate <= best_answer_yet) {
+			return profit_taken;
 		}
+
+		// Case 1: Don't take it
+		items[cur_item].taken = false;
+		int not_taken_profit = -1;
+		not_taken_profit = Knapsack_Helper(memo, start_time, max_weight, best_answer_yet, best_vector_yet, items, cur_item + 1, profit_taken, weight_used);
+
+		// Case 2: Take it
+		items[cur_item].taken = true;
+		int taken_profit = -1;
+		if (weight_used + items[cur_item].weight <= max_weight) {
+			taken_profit = Knapsack_Helper(memo, start_time, max_weight, best_answer_yet, best_vector_yet, items, cur_item + 1, profit_taken + items[cur_item].value, weight_used + items[cur_item].weight);
+		}
+
+		// Select the most profitable case
+		int return_profit;
+		if (not_taken_profit > taken_profit) {
+			items[cur_item].taken = false;
+			return_profit = not_taken_profit;
+		} else {
+			items[cur_item].taken = true;
+			return_profit = taken_profit;
+		}
+
+		// Check if we have found the best result yet
+		if (return_profit > best_answer_yet) {
+			best_answer_yet = return_profit;
+			best_vector_yet = std::vector<Item>(items);
+		}
+		
+		// Return best profit
+		return return_profit;
+	
 	}
 }
 
